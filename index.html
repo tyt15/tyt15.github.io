@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>大学生校园零食补给站 - 完整商城系统</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"微软雅黑",sans-serif;}
+body{background:#f7f9fc;color:#333;}
+
+/* 全局颜色 */
+:root{
+    --orange:#ff7f24;    /* 暖橙色主色调 */
+    --white:#ffffff;     /* 白色清爽 */
+    --blue:#40a9ff;      /* 浅蓝辅助色 */
+    --gray:#f0f2f5;
+}
+
+/* 顶部导航栏 */
+.header{
+    background:var(--orange);
+    padding:12px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    z-index:999;
+}
+.logo{color:#fff;font-size:22px;font-weight:bold;}
+.nav-menu a{
+    color:#fff;
+    text-decoration:none;
+    margin:0 15px;
+    font-size:15px;
+}
+.search-box{
+    width:380px;
+    height:38px;
+    border:none;
+    border-radius:8px;
+    padding:0 15px;
+    outline:none;
+}
+.cart-btn{
+    background:var(--blue);
+    color:#fff;
+    border:none;
+    padding:8px 16px;
+    border-radius:6px;
+    cursor:pointer;
+}
+.admin-btn{
+    background:#333;
+    color:#fff;
+    border:none;
+    padding:8px 16px;
+    border-radius:6px;
+    margin-left:10px;
+    cursor:pointer;
+}
+
+/* 轮播banner */
+.banner{
+    height:220px;
+    background:#fff3e6;
+    margin:15px 30px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+    color:var(--orange);
+}
+
+/* 商品分类 */
+.cate-wrap{
+    padding:10px 30px;
+}
+.cate-title{
+    font-size:18px;
+    color:var(--orange);
+    font-weight:bold;
+    margin-bottom:12px;
+}
+.cate-list{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+.cate-item{
+    background:var(--orange);
+    color:#fff;
+    padding:8px 20px;
+    border-radius:25px;
+    cursor:pointer;
+}
+
+/* 商品网格 */
+.goods-container{
+    padding:20px 30px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+.goods-card{
+    background:#fff;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+.goods-card img{
+    width:100%;
+    height:170px;
+    object-fit:cover;
+}
+.goods-info{
+    padding:12px;
+}
+.goods-name{font-size:14px;margin-bottom:6px;}
+.goods-price{color:#ff4500;font-weight:bold;font-size:16px;}
+.add-cart{
+    width:100%;
+    background:var(--blue);
+    color:#fff;
+    border:none;
+    padding:9px;
+    border-radius:6px;
+    margin-top:10px;
+    cursor:pointer;
+}
+
+/* 底部 */
+.footer{
+    background:#333;
+    color:#fff;
+    text-align:center;
+    padding:25px;
+    margin-top:30px;
+}
+
+/* ========== 后台管理页面 默认隐藏 ========== */
+.admin-page{
+    display:none;
+    margin-top:20px;
+}
+.admin-wrap{
+    display:flex;
+}
+.admin-menu{
+    width:230px;
+    height:calc(100vh - 120px);
+    background:#2c3e50;
+    color:#fff;
+}
+.admin-menu h3{
+    background:var(--orange);
+    padding:15px;
+    text-align:center;
+}
+.admin-menu a{
+    display:block;
+    padding:14px 25px;
+    color:#ccc;
+    text-decoration:none;
+    border-left:4px solid transparent;
+}
+.admin-menu a:hover{
+    background:#34495e;
+    border-left:4px solid var(--orange);
+    color:#fff;
+}
+.admin-main{
+    flex:1;
+    padding:20px;
+}
+.admin-box{
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+.admin-box h3{
+    color:var(--orange);
+    margin-bottom:15px;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+th,td{
+    padding:12px;
+    text-align:left;
+    border-bottom:1px solid #eee;
+}
+th{background:#f8f9fa;}
+
+</style>
+</head>
+
+<body>
+<!-- 前台商城头部 -->
+<div class="header">
+    <div class="logo">校园零食补给站</div>
+    <div class="nav-menu">
+        <a href="#">首页</a>
+        <a href="#">刚需零食</a>
+        <a href="#">套餐专区</a>
+        <a href="#">健康轻食</a>
+        <a href="#">我的订单</a>
+    </div>
+    <input type="text" class="search-box" placeholder="搜索零食、套餐、爆款好物">
+    <button class="cart-btn">购物车(0)</button>
+    <button class="admin-btn" onclick="switchPage()">进入后台管理</button>
+</div>
+
+<!-- 前台商城主体 -->
+<div class="front-page">
+    <div class="banner">
+        校园特惠｜首单免运费 · 考试周能量套餐限时折扣
+    </div>
+
+    <div class="cate-wrap">
+        <div class="cate-title">商品全部分类</div>
+        <div class="cate-list">
+            <div class="cate-item">刚需零食区</div>
+            <div class="cate-item">场景套餐区</div>
+            <div class="cate-item">健康轻食区</div>
+        </div>
+    </div>
+
+    <div class="cate-wrap">
+        <div class="cate-title">热门爆款零食</div>
+    </div>
+    <div class="goods-container">
+        <!-- 原有4个商品 -->
+        <div class="goods-card">
+            <img src="膨化大礼包.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">膨化休闲零食大礼包</div>
+                <div class="goods-price">¥9.90</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+        <div class="goods-card">
+            <img src="卤味.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">香辣卤味熟食组合</div>
+                <div class="goods-price">¥12.80</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+        <div class="goods-card">
+            <img src="追剧.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">追剧解压零食套餐</div>
+                <div class="goods-price">¥29.90</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+        <div class="goods-card">
+            <img src="小饼干低脂.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">低糖低脂健康饼干</div>
+                <div class="goods-price">¥8.50</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+
+        <!-- 新增9个商品 -->
+        <div class="goods-card">
+             <img src="薯片.jpg" />
+            <div class="goods-info">
+               <div class="goods-name">薯片</div>
+                <div class="goods-price">¥4.50</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+        <div class="goods-card">
+            <img src="巧克力.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">巧克力</div>
+                <div class="goods-price">¥12.90</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+        <div class="goods-card">
+            <img src="蔓越莓.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">蔓越莓饼干</div>
+                <div class="goods-price">¥7.80</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+        <div class="goods-card">
+            <img src="牛肉干.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">牛肉干</div>
+                <div class="goods-price">¥18.90</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+        <div class="goods-card">
+            <img src="广东.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">果味果冻</div>
+                <div class="goods-price">¥5.90</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+        <div class="goods-card">
+            <img src="坚果礼包.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">坚果礼盒</div>
+                <div class="goods-price">¥39.90</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+        <div class="goods-card">
+            <img src="辣条.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">网红辣条</div>
+                <div class="goods-price">¥6.50</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+        <div class="goods-card">
+            <img src="果味软糖.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">水果软糖</div>
+                <div class="goods-price">¥4.90</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+        <div class="goods-card">
+            <img src="微信图片_20260421091928_12_71.jpg" />
+            <div class="goods-info">
+                <div class="goods-name">鸡蛋卷</div>
+                <div class="goods-price">¥9.90</div>
+                <button class="add-cart">加入购物车</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        大学生校园零食补给站 © 2026 版权所有 | 宿舍配送 · 校园专属
+    </div>
+</div>
+
+<!-- 后台管理页面 -->
+<div class="admin-page">
+    <div class="admin-wrap">
+        <div class="admin-menu">
+            <h3>商城管理后台</h3>
+            <a>商品信息管理</a>
+            <a>商品库存管控</a>
+            <a>下单客户信息</a>
+            <a>订单配送管理</a>
+            <a>销售数据统计</a>
+            <button class="admin-btn" style="margin:10px;width:80%" onclick="switchPage()">返回前台商城</button>
+        </div>
+        <div class="admin-main">
+            <div class="admin-box">
+                <h3>商品库存管理</h3>
+                <table>
+                    <tr>
+                        <th>商品ID</th>
+                        <th>商品名称</th>
+                        <th>售价</th>
+                        <th>当前库存</th>
+                        <th>分类</th>
+                        <th>操作</th>
+                    </tr>
+                    <tr>
+                        <td>01</td>
+                        <td>膨化零食礼包</td>
+                        <td>9.9</td>
+                        <td>156</td>
+                        <td>刚需零食</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                    <tr>
+                        <td>02</td>
+                        <td>卤味熟食</td>
+                        <td>12.8</td>
+                        <td>92</td>
+                        <td>刚需零食</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                    <tr>
+                        <td>03</td>
+                        <td>追剧解压套餐</td>
+                        <td>29.9</td>
+                        <td>63</td>
+                        <td>场景套餐</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                    <tr>
+                        <td>04</td>
+                        <td>薯片</td>
+                        <td>4.5</td>
+                        <td>200</td>
+                        <td>刚需零食</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                    <tr>
+                        <td>05</td>
+                        <td>巧克力</td>
+                        <td>12.9</td>
+                        <td>120</td>
+                        <td>刚需零食</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                    <tr>
+                        <td>06</td>
+                        <td>蔓越莓饼干</td>
+                        <td>7.8</td>
+                        <td>160</td>
+                        <td>健康轻食</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                    <tr>
+                        <td>07</td>
+                        <td>牛肉干</td>
+                        <td>18.9</td>
+                        <td>85</td>
+                        <td>刚需零食</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                    <tr>
+                        <td>08</td>
+                        <td>果味果冻</td>
+                        <td>5.9</td>
+                        <td>210</td>
+                        <td>刚需零食</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                    <tr>
+                        <td>09</td>
+                        <td>坚果礼盒</td>
+                        <td>39.9</td>
+                        <td>45</td>
+                        <td>场景套餐</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>网红辣条</td>
+                        <td>6.5</td>
+                        <td>180</td>
+                        <td>刚需零食</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>水果软糖</td>
+                        <td>4.9</td>
+                        <td>230</td>
+                        <td>刚需零食</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>鸡蛋卷</td>
+                        <td>9.9</td>
+                        <td>145</td>
+                        <td>健康轻食</td>
+                        <td>修改库存｜编辑｜删除</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="admin-box">
+                <h3>下单客户信息管理</h3>
+                <table>
+                    <tr>
+                        <th>用户ID</th>
+                        <th>学生昵称</th>
+                        <th>联系电话</th>
+                        <th>宿舍地址</th>
+                        <th>累计下单</th>
+                    </tr>
+                    <tr>
+                        <td>U001</td>
+                        <td>小同学</td>
+                        <td>138****8899</td>
+                        <td>3号宿舍楼402</td>
+                        <td>5单</td>
+                    </tr>
+                    <tr>
+                        <td>U002</td>
+                        <td>干饭人</td>
+                        <td>139****6677</td>
+                        <td>5号宿舍楼601</td>
+                        <td>2单</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="admin-box">
+                <h3>订单信息管理</h3>
+                <table>
+                    <tr>
+                        <th>订单编号</th>
+                        <th>下单用户</th>
+                        <th>购买商品</th>
+                        <th>订单金额</th>
+                        <th>订单状态</th>
+                    </tr>
+                    <tr>
+                        <td>SN20260421001</td>
+                        <td>小同学</td>
+                        <td>追剧解压套餐</td>
+                        <td>29.90</td>
+                        <td>待配送</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 前后台页面切换
+    let isAdmin = false;
+    function switchPage(){
+        isAdmin = !isAdmin;
+        if(isAdmin){
+            document.querySelector('.front-page').style.display='none';
+            document.querySelector('.admin-page').style.display='block';
+        }else{
+            document.querySelector('.front-page').style.display='block';
+            document.querySelector('.admin-page').style.display='none';
+        }
+    }
+
+    // 购物车计数功能
+    let cartNum = 0;
+const cartBtn = document.querySelector('.cart-btn');
+const addBtns = document.querySelectorAll('.add-cart');
+
+    addBtns.forEach(btn=>{
+        btn.onclick = function(){
+            cartNum++;
+            cartBtn.innerText = `购物车(${cartNum})`;
+    alert('商品已成功加入购物车！');
+    }
+    })
+</script>
+</body>
+</html>
